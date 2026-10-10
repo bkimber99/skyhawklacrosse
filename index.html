@@ -12,23 +12,193 @@
       --sky: #7BA4DB;
       --white: #FFFFFF;
       --gold: #B3A369;
+      --ink: #08172c;
+      --line: rgba(255, 255, 255, 0.12);
+      --muted: rgba(255, 255, 255, 0.68);
     }
 
     * { box-sizing: border-box; }
+
+    html { background: var(--ink); }
 
     body {
       margin: 0;
       min-height: 100vh;
       display: flex;
-      align-items: center;
-      justify-content: center;
+      flex-direction: column;
       background:
         radial-gradient(circle at top, rgba(123, 164, 219, 0.16), transparent 35%),
-        linear-gradient(180deg, #102c4e 0%, var(--navy) 45%, #08172c 100%);
+        linear-gradient(180deg, #102c4e 0%, var(--navy) 45%, var(--ink) 100%);
+      background-attachment: fixed;
       color: var(--white);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    /* ---------- Schedule ribbon ---------- */
+
+    .ribbon {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: stretch;
+      background: rgba(8, 23, 44, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 2px solid var(--gold);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .ribbon[hidden] { display: none; }
+
+    .ribbon-label {
+      flex: none;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      background: var(--gold);
+      color: var(--navy);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      line-height: 1.15;
+    }
+
+    .ribbon-viewport {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      mask-image: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+    }
+
+    .ribbon-track {
+      display: flex;
+      width: max-content;
+      animation: ribbon-scroll var(--ribbon-duration, 60s) linear infinite;
+    }
+
+    .ribbon:hover .ribbon-track,
+    .ribbon:focus-within .ribbon-track { animation-play-state: paused; }
+
+    @keyframes ribbon-scroll {
+      to { transform: translateX(-50%); }
+    }
+
+    .game-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 18px;
+      border-right: 1px solid var(--line);
+      color: inherit;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .game-chip:hover { background: rgba(123, 164, 219, 0.12); }
+
+    .chip-date {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1.05;
+    }
+
+    .chip-month {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--sky);
+    }
+
+    .chip-day {
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+
+    .logo-badge {
+      flex: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--white);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
+    }
+
+    .logo-badge img {
+      width: 82%;
+      height: 82%;
+      object-fit: contain;
+    }
+
+    .logo-badge .initial {
+      color: var(--navy);
+      font-weight: 800;
+    }
+
+    .ha {
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 7px;
+      border-radius: 999px;
+    }
+
+    .ha.home { background: var(--sky); color: var(--navy); }
+    .ha.away { background: transparent; color: var(--gold); box-shadow: inset 0 0 0 1.5px var(--gold); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .ribbon-track { animation: none; }
+      .ribbon-viewport { overflow-x: auto; mask-image: none; }
+    }
+
+    /* ---------- Tabs ---------- */
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px 16px 0;
+    }
+
+    .tab {
+      padding: 9px 20px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .tab:hover { color: var(--white); }
+
+    .tab[aria-current="page"] {
+      color: var(--navy);
+      background: var(--white);
+    }
+
+    .panel {
+      flex: 1;
+      width: 100%;
+      padding: 24px 16px 48px;
+    }
+
+    .panel[hidden] { display: none !important; }
+
+    /* ---------- Home ---------- */
+
+    #panel-home {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       text-align: center;
-      padding: 24px;
     }
 
     .wrap {
@@ -62,13 +232,545 @@
       background: linear-gradient(90deg, var(--sky), var(--gold));
       opacity: 0.95;
     }
+
+    /* ---------- Schedule tab ---------- */
+
+    .schedule {
+      width: min(100%, 860px);
+      margin: 0 auto;
+    }
+
+    .schedule h2 {
+      margin: 0 0 6px;
+      font-size: clamp(1.4rem, 2vw + 1rem, 2rem);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .schedule .sub {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .schedule .sub a { color: var(--sky); }
+
+    .game-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .game-row {
+      display: grid;
+      grid-template-columns: 76px minmax(0, 1fr) auto;
+      grid-template-areas:
+        "date opp ha"
+        "date info info";
+      gap: 6px 14px;
+      align-items: center;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+
+    .game-row.past { opacity: 0.5; }
+
+    .row-date {
+      grid-area: date;
+      text-align: center;
+      line-height: 1.1;
+      padding-right: 14px;
+      border-right: 1px solid var(--line);
+    }
+
+    .row-date .dow {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--sky);
+    }
+
+    .row-date .md {
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+
+    .row-opp {
+      grid-area: opp;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .row-opp .prefix {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .region {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .row-ha { grid-area: ha; }
+
+    .row-info {
+      grid-area: info;
+      min-width: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 16px;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .row-info a {
+      color: var(--sky);
+      overflow-wrap: anywhere;
+      text-decoration: none;
+    }
+
+    .row-info a:hover { text-decoration: underline; }
+
+    .row-info strong { color: var(--white); font-weight: 600; }
+
+    @media (max-width: 520px) {
+      .game-row {
+        grid-template-columns: 60px minmax(0, 1fr) auto;
+        padding: 12px;
+        gap: 6px 10px;
+      }
+      .row-date { padding-right: 10px; }
+      .row-opp { font-size: 0.95rem; gap: 8px; }
+      .row-opp .logo-badge { width: 32px; height: 32px; }
+      .row-info { flex-direction: column; }
+    }
   </style>
 </head>
 <body>
-  <main class="wrap">
-    <img class="logo" src="./banner-logo.png" alt="Salem Hills Skyhawk Lacrosse" />
-    <div class="accent" aria-hidden="true"></div>
-    <h1 class="headline">Official Site of Salem Hills Lacrosse</h1>
+  <aside class="ribbon" id="ribbon" aria-label="Upcoming games" hidden>
+    <a class="ribbon-label" href="#schedule">Upcoming<br />Games</a>
+    <div class="ribbon-viewport">
+      <div class="ribbon-track" id="ribbon-track"></div>
+    </div>
+  </aside>
+
+  <nav class="tabs" aria-label="Sections">
+    <a class="tab" href="#home" data-tab="home">Home</a>
+    <a class="tab" href="#schedule" data-tab="schedule">Schedule</a>
+  </nav>
+
+  <main class="panel" id="panel-home">
+    <div class="wrap">
+      <img class="logo" src="./banner-logo.png" alt="Salem Hills Skyhawk Lacrosse" />
+      <div class="accent" aria-hidden="true"></div>
+      <h1 class="headline">Official Site of Salem Hills Lacrosse</h1>
+    </div>
   </main>
+
+  <section class="panel" id="panel-schedule" hidden>
+    <div class="schedule">
+      <h2 id="schedule-title">Varsity Schedule</h2>
+      <p class="sub">Times and locations can change. <a href="https://www.maxpreps.com/ut/salem/salem-hills-skyhawks/lacrosse/schedule/" target="_blank" rel="noopener">See MaxPreps</a> for the latest.</p>
+      <ol class="game-list" id="game-list"></ol>
+    </div>
+  </section>
+
+  <script>
+    // Generated by scripts/update_schedule.py; re-run it rather than editing by hand.
+    /* SCHEDULE_DATA:START */
+    const SCHEDULE_SEASON = "26-27";
+    const SCHEDULE = [
+  {
+    "date": "2027-03-10",
+    "time": "7:00pm",
+    "home": false,
+    "opponent": "Provo",
+    "region": false,
+    "logo": "./logos/provo-bulldogs.png",
+    "venue": {
+      "name": "Provo High School",
+      "address": "1125 N University Ave, Provo, UT"
+    },
+    "url": "https://www.maxpreps.com/ut/lacrosse/game/provo-vs-salem-hills/3-10-2027/?c=ec3b3911-f580-4fab-8f11-80668ea4875e"
+  },
+  {
+    "date": "2027-03-12",
+    "time": "7:00pm",
+    "home": false,
+    "opponent": "Orem",
+    "region": false,
+    "logo": "./logos/orem-tigers.png",
+    "venue": {
+      "name": "Orem High School",
+      "address": "175 S 400 E, Orem, UT"
+    },
+    "url": "https://www.maxpreps.com/ut/lacrosse/game/orem-vs-salem-hills/3-12-2027/?c=dc2a4480-1ef0-4316-9611-1aad50cc88e4"
+  },
+  {
+    "date": "2027-03-16",
+    "time": "TBA",
+    "home": false,
+    "opponent": "Jordan",
+    "region": false,
+    "logo": "./logos/jordan-beetdiggers.png",
+    "venue": {
+      "name": "Jordan High School",
+      "address": "95 E Beetdigger Blvd, Sandy, UT"
+    },
+    "url": "https://www.maxpreps.com/ut/lacrosse/game/jordan-sandy-vs-salem-hills/3-16-2027/?c=caa778a5-eec2-4133-9225-465b40499e18"
+  },
+  {
+    "date": "2027-03-19",
+    "time": "7:00pm",
+    "home": true,
+    "opponent": "Timpview",
+    "region": true,
+    "logo": "./logos/timpview-thunderbirds.png",
+    "venue": {
+      "name": "Salem Hills High School",
+      "address": "150 N. Skyhawk Blvd., Salem, UT"
+    },
+    "url": "https://www.maxpreps.com/ut/lacrosse/game/salem-hills-vs-timpview-provo/3-19-2027/?c=57177b4c-5296-4f46-9d2c-11a1ec2f2d9f"
+  },
+  {
+    "date": "2027-03-24",
+    "time": "7:00pm",
+    "home": false,
+    "opponent": "Maple Mountain",
+    "region": true,
+    "logo": "./logos/maple-mountain-eagles.png",
+    "venue": {
+      "name": "Maple Mountain High School",
+      "address": "51 N 2550 E, Spanish Fork, UT"
+    },
+    "url": "https://www.maxpreps.com/ut/lacrosse/game/maple-mountain-spanish-fork-vs-salem-hills/3-24-2027/?c=7175281f-13e8-48b5-b30e-b36efd499ac9"
+  },
+  {
+    "date": "2027-03-26",
+    "time": "7:00pm",
+    "home": true,
+    "opponent": "Spanish Fork",
+    "region": true,
+    "logo": "./logos/spanish-fork-dons.png",
+    "venue": {
+      "name": "Salem Hills High School",
+      "address": "150 N. Skyhawk Blvd., Salem, UT"
+    },
+    "url": "https://www.maxpreps.com/ut/lacrosse/game/salem-hills-vs-spanish-fork/3-26-2027/?c=1aef5020-9428-4c71-8e84-4ea976f50837"
+  },
+  {
+    "date": "2027-03-31",
+    "time": "7:00pm",
+    "home": false,
+    "opponent": "Springville",
+    "region": true,
+    "logo": "./logos/springville-red-devils.png",
+    "venue": {
+      "name": "Springville High School",
+      "address": "1205 E 900 S, Springville, UT"
+    },
+    "url": "https://www.maxpreps.com/ut/lacrosse/game/salem-hills-vs-springville/3-31-2027/?c=26783a0a-cb22-4d1b-8cfc-3798e3a85870"
+  },
+  {
+    "date": "2027-04-02",
+    "time": "7:00pm",
+    "home": true,
+    "opponent": "American Fork",
+    "region": false,
+    "logo": "./logos/american-fork-cavemen.png",
+    "venue": {
+      "name": "Salem Hills High School",
+      "address": "150 N. Skyhawk Blvd., Salem, UT"
+    },
+    "url": "https://www.maxpreps.com/ut/lacrosse/game/american-fork-vs-salem-hills/4-2-2027/?c=83438fde-8cb3-459d-992b-b0c0018c6117"
+  },
+  {
+    "date": "2027-04-14",
+    "time": "7:00pm",
+    "home": true,
+    "opponent": "Payson",
+    "region": true,
+    "logo": "./logos/payson-lions.png",
+    "venue": {
+      "name": "Salem Hills High School",
+      "address": "150 N. Skyhawk Blvd., Salem, UT"
+    },
+    "url": "https://www.maxpreps.com/ut/lacrosse/game/payson-vs-salem-hills/4-14-2027/?c=2c46e5a7-bd4f-4df7-bd34-1fd09afd5f24"
+  },
+  {
+    "date": "2027-04-16",
+    "time": "7:00pm",
+    "home": false,
+    "opponent": "Pleasant Grove",
+    "region": true,
+    "logo": "./logos/pleasant-grove-vikings.png",
+    "venue": {
+      "name": "Pleasant Grove High School",
+      "address": "700 E 200 S, Pleasant Grove, UT"
+    },
+    "url": "https://www.maxpreps.com/ut/lacrosse/game/pleasant-grove-vs-salem-hills/4-16-2027/?c=7e653668-df0f-45cc-a7dc-f4b8e5576d3d"
+  },
+  {
+    "date": "2027-04-21",
+    "time": "7:00pm",
+    "home": false,
+    "opponent": "Timpview",
+    "region": true,
+    "logo": "./logos/timpview-thunderbirds.png",
+    "venue": {
+      "name": "Timpview High School",
+      "address": "3570 N Timpview Dr, Provo, UT"
+    },
+    "url": "https://www.maxpreps.com/ut/lacrosse/game/salem-hills-vs-timpview-provo/4-21-2027/?c=c25d743a-642b-4581-a6cb-93093857b325"
+  },
+  {
+    "date": "2027-04-23",
+    "time": "7:00pm",
+    "home": true,
+    "opponent": "Maple Mountain",
+    "region": true,
+    "logo": "./logos/maple-mountain-eagles.png",
+    "venue": {
+      "name": "Salem Hills High School",
+      "address": "150 N. Skyhawk Blvd., Salem, UT"
+    },
+    "url": "https://www.maxpreps.com/ut/lacrosse/game/maple-mountain-spanish-fork-vs-salem-hills/4-23-2027/?c=fbe0b5da-2421-4327-83db-0df98254010a"
+  },
+  {
+    "date": "2027-04-28",
+    "time": "7:00pm",
+    "home": false,
+    "opponent": "Spanish Fork",
+    "region": true,
+    "logo": "./logos/spanish-fork-dons.png",
+    "venue": {
+      "name": "Spanish Fork High School",
+      "address": "158 N 630 W, Spanish Fork, UT"
+    },
+    "url": "https://www.maxpreps.com/ut/lacrosse/game/salem-hills-vs-spanish-fork/4-28-2027/?c=9e950589-59ea-446c-9e23-538588430dc3"
+  },
+  {
+    "date": "2027-04-30",
+    "time": "7:00pm",
+    "home": true,
+    "opponent": "Pleasant Grove",
+    "region": true,
+    "logo": "./logos/pleasant-grove-vikings.png",
+    "venue": {
+      "name": "Salem Hills High School",
+      "address": "150 N. Skyhawk Blvd., Salem, UT"
+    },
+    "url": "https://www.maxpreps.com/ut/lacrosse/game/pleasant-grove-vs-salem-hills/4-30-2027/?c=be726819-731d-4336-9a73-de8ed0e6d77f"
+  },
+  {
+    "date": "2027-05-05",
+    "time": "7:00pm",
+    "home": true,
+    "opponent": "Lehi",
+    "region": false,
+    "logo": "./logos/lehi-pioneers.png",
+    "venue": {
+      "name": "Salem Hills High School",
+      "address": "150 N. Skyhawk Blvd., Salem, UT"
+    },
+    "url": "https://www.maxpreps.com/ut/lacrosse/game/lehi-vs-salem-hills/5-5-2027/?c=582fdb71-0d72-4a82-9e54-b8c5ce7cd2a0"
+  },
+  {
+    "date": "2027-05-07",
+    "time": "7:00pm",
+    "home": false,
+    "opponent": "Payson",
+    "region": true,
+    "logo": "./logos/payson-lions.png",
+    "venue": {
+      "name": "Payson High School",
+      "address": "1050 S Main St, Payson, UT"
+    },
+    "url": "https://www.maxpreps.com/ut/lacrosse/game/payson-vs-salem-hills/5-7-2027/?c=97d798f1-3c55-47db-9b03-85cdc70c8911"
+  },
+  {
+    "date": "2027-05-12",
+    "time": "7:00pm",
+    "home": true,
+    "opponent": "Springville",
+    "region": true,
+    "logo": "./logos/springville-red-devils.png",
+    "venue": {
+      "name": "Salem Hills High School",
+      "address": "150 N. Skyhawk Blvd., Salem, UT"
+    },
+    "url": "https://www.maxpreps.com/ut/lacrosse/game/salem-hills-vs-springville/5-12-2027/?c=0b2f74b0-7b80-4be1-851b-cf4f86b57966"
+  },
+  {
+    "date": "2027-05-14",
+    "time": "5:30pm",
+    "home": false,
+    "opponent": "West Jordan",
+    "region": false,
+    "logo": "./logos/west-jordan-jaguars.png",
+    "venue": {
+      "name": "West Jordan High School",
+      "address": "8136 S 2700 W, West Jordan, UT"
+    },
+    "url": "https://www.maxpreps.com/ut/lacrosse/game/salem-hills-vs-west-jordan/5-14-2027/?c=d13f8de5-91d3-4fe1-9a8d-973ece046a8d"
+  }
+];
+    /* SCHEDULE_DATA:END */
+
+    const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    function el(tag, attrs = {}, children = []) {
+      const node = document.createElement(tag);
+      for (const [key, value] of Object.entries(attrs)) {
+        if (key === "text") node.textContent = value;
+        else node.setAttribute(key, value);
+      }
+      for (const child of children) node.append(child);
+      return node;
+    }
+
+    function parseDate(iso) {
+      const [y, m, d] = iso.split("-").map(Number);
+      return new Date(y, m - 1, d);
+    }
+
+    function logoBadge(game) {
+      const badge = el("span", { class: "logo-badge" });
+      if (game.logo) {
+        badge.append(el("img", { src: game.logo, alt: game.opponent, loading: "lazy" }));
+      } else {
+        badge.append(el("span", { class: "initial", text: game.opponent[0], "aria-hidden": "true" }));
+      }
+      return badge;
+    }
+
+    function homeAway(game) {
+      return el("span", { class: `ha ${game.home ? "home" : "away"}`, text: game.home ? "Home" : "Away" });
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const isPast = (game) => parseDate(game.date) < today;
+
+    function buildRibbon() {
+      const upcoming = SCHEDULE.filter((g) => !isPast(g));
+      if (!upcoming.length) return;
+
+      const ribbon = document.getElementById("ribbon");
+      const track = document.getElementById("ribbon-track");
+      const chip = (game) => {
+        const date = parseDate(game.date);
+        return el("a", {
+          class: "game-chip",
+          href: "#schedule",
+          title: `${game.home ? "vs" : "at"} ${game.opponent}, ${MONTHS[date.getMonth()]} ${date.getDate()}`,
+        }, [
+          el("span", { class: "chip-date" }, [
+            el("span", { class: "chip-month", text: MONTHS[date.getMonth()].toUpperCase() }),
+            el("span", { class: "chip-day", text: String(date.getDate()) }),
+          ]),
+          logoBadge(game),
+          homeAway(game),
+        ]);
+      };
+
+      ribbon.hidden = false;
+      // Repeat the games until one copy is wider than the screen, then render
+      // that copy twice so the -50% scroll loops seamlessly.
+      const copy = [];
+      do {
+        upcoming.forEach((g) => { const c = chip(g); copy.push(c); track.append(c); });
+      } while (track.scrollWidth < window.innerWidth && copy.length < 200);
+      copy.forEach((c) => {
+        const clone = c.cloneNode(true);
+        clone.setAttribute("aria-hidden", "true");
+        clone.tabIndex = -1;
+        track.append(clone);
+      });
+      // Constant speed (~40px/s) no matter how many games there are.
+      track.style.setProperty("--ribbon-duration", `${Math.round(track.scrollWidth / 2 / 40)}s`);
+    }
+
+    function buildSchedule() {
+      const list = document.getElementById("game-list");
+      if (SCHEDULE_SEASON) {
+        const endYear = SCHEDULE_SEASON.split("-")[1];
+        document.getElementById("schedule-title").textContent = `20${endYear} Varsity Schedule`;
+      }
+      if (!SCHEDULE.length) {
+        list.append(el("li", { class: "sub", text: "Schedule coming soon." }));
+        return;
+      }
+      for (const game of SCHEDULE) {
+        const date = parseDate(game.date);
+        const venue = game.venue || {};
+        const mapsUrl = venue.address
+          ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name} ${venue.address}`)}`
+          : null;
+
+        const info = el("div", { class: "row-info" }, [
+          el("span", {}, [el("strong", { text: game.time === "TBA" ? "Time TBA" : game.time.replace(/(am|pm)$/i, " $1").toUpperCase() })]),
+        ]);
+        if (venue.name) {
+          info.append(mapsUrl
+            ? el("a", { href: mapsUrl, target: "_blank", rel: "noopener", text: `${venue.name} · ${venue.address}` })
+            : el("span", { text: venue.name }));
+        }
+
+        const name = el("span", {}, [
+          el("span", { class: "prefix", text: game.home ? "vs " : "@ " }),
+          game.opponent,
+        ]);
+        const oppText = el("span", {}, [name]);
+        if (game.region) oppText.append(el("div", { class: "region", text: "Region" }));
+
+        list.append(el("li", { class: `game-row${isPast(game) ? " past" : ""}` }, [
+          el("div", { class: "row-date" }, [
+            el("div", { class: "dow", text: DAYS[date.getDay()] }),
+            el("div", { class: "md", text: `${date.getMonth() + 1}/${date.getDate()}` }),
+          ]),
+          el("div", { class: "row-opp" }, [logoBadge(game), oppText]),
+          el("div", { class: "row-ha" }, [homeAway(game)]),
+          info,
+        ]));
+      }
+    }
+
+    function showTab() {
+      const current = location.hash === "#schedule" ? "schedule" : "home";
+      for (const tab of document.querySelectorAll("[data-tab]")) {
+        const active = tab.dataset.tab === current;
+        if (active) tab.setAttribute("aria-current", "page");
+        else tab.removeAttribute("aria-current");
+        document.getElementById(`panel-${tab.dataset.tab}`).hidden = !active;
+      }
+    }
+
+    // Panels are id'd "panel-*" so the #hash never matches an element and the
+    // browser doesn't jump-scroll to it.
+    window.addEventListener("hashchange", () => {
+      showTab();
+      window.scrollTo({ top: 0 });
+    });
+
+    buildRibbon();
+    buildSchedule();
+    showTab();
+  </script>
 </body>
 </html>
