@@ -90,11 +90,18 @@ def venue(game_url):
 
 
 def save_logo(game):
-    """Download the opponent's mascot as a PNG; returns its relative path."""
+    """Download the opponent's mascot as a PNG; returns its relative path.
+
+    A hand-picked replacement saved as logos/<slug>-vN.png wins over the
+    MaxPreps download (highest N), and existing files are never re-downloaded.
+    """
     if not game["logoSrc"]:
         return None
     slug = (game["opponentPath"] or game["opponent"]).strip("/").split("/")
     slug = slug[2] if len(slug) >= 3 else re.sub(r"[^a-z0-9]+", "-", game["opponent"].lower())
+    versions = [int(m.group(1)) for f in os.listdir(LOGO_DIR) if (m := re.fullmatch(rf"{re.escape(slug)}-v(\d+)\.png", f))]
+    if versions:
+        return f"logos/{slug}-v{max(versions)}.png"
     rel = f"logos/{slug}.png"
     dest = os.path.join(ROOT, rel)
     if not os.path.exists(dest):
